@@ -38,7 +38,7 @@ function DesktopSidebar() {
       </div>
       <div className="p-2">TODO CREDITS</div>
       <div className="flex flex-col p-2 ">
-        {routes.map((route, index) => (
+        {routes.map((route) => (
           <Link
             key={route.href}
             href={route.href}
@@ -81,7 +81,7 @@ export function MobileSidebar() {
           >
             <Logo />
             <div className="flex flex-col gap-1">
-              {routes.map((route, index) => (
+              {routes.map((route) => (
                 <Link
                   key={route.href}
                   href={route.href}
