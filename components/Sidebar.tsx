@@ -15,18 +15,20 @@ import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const routes = [
-  { href: "", label: "Home", icon: HomeIcon },
-  { href: "workflows", label: "Workflows", icon: Layers2Icon },
-  { href: "credentials", label: "Credentials", icon: ShieldIcon },
-  { href: "billing", label: "Billing", icon: CoinsIcon },
+  { href: "/", label: "Home", icon: HomeIcon },
+  { href: "/workflows", label: "Workflows", icon: Layers2Icon },
+  { href: "/credentials", label: "Credentials", icon: ShieldIcon },
+  { href: "/billing", label: "Billing", icon: CoinsIcon },
 ];
 
 function DesktopSidebar() {
   const pathName = usePathname();
+
   const activeRoute =
     routes.find(
-      (route) => route.href.length > 0 && pathName.includes(route.href)
+      (route) => route.href.length > 1 && pathName.includes(route.href)
     ) || routes[0];
+
   return (
     <div
       className="hidden relative md:block min-w-[280px] max-w-[280px] h-screen 
