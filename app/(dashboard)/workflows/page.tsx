@@ -4,6 +4,7 @@ import getWorkflowsForUser from "@/actions/workflows/getWorkflowsForUser";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, InboxIcon } from "lucide-react";
 import CreateWorkflowDialog from "@/app/(dashboard)/workflows/_components/CreateWorkflowDialog";
+import WorkflowCard from "@/app/(dashboard)/workflows/_components/WorkflowCard";
 
 function Page() {
   return (
@@ -57,17 +58,9 @@ async function UserWorkflows() {
     }
 
     return (
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4">
         {workflows.map((workflow) => (
-          <div key={workflow.id} className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold">{workflow.name}</h2>
-              <p className="text-muted-foreground">{workflow.description}</p>
-            </div>
-            <div>
-              <button className="btn">Edit</button>
-            </div>
-          </div>
+          <WorkflowCard key={workflow.id} workflow={workflow}></WorkflowCard>
         ))}
       </div>
     );
