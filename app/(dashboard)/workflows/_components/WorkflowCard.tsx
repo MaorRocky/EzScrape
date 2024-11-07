@@ -105,7 +105,7 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
               buttonVariants({ variant: "outline", size: "sm" }),
               "flex items-center gap-2"
             )}
-            href={`/workflow/editor${workflow.id}`}
+            href={`/workflow/editor/${workflow.id}`}
           >
             <ShuffleIcon size="16" />
             Edit

@@ -18,5 +18,5 @@ export async function deleteWorkflow(id: string) {
     },
   });
 
-  revalidatePath("/workflows");
+  revalidatePath("/workflow");
 }
