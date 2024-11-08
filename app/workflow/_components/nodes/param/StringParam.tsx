@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import React, { useId, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ParamProps } from "@/types/appNode";
@@ -8,6 +8,12 @@ import { ParamProps } from "@/types/appNode";
 function StringParam({ param, value, updateNodeParamValue }: ParamProps) {
   const [internalValue, setInternalValue] = useState(value);
   const id = useId();
+
+  useEffect(() => {
+    console.log("StringParam useEffect", value);
+
+    setInternalValue(value);
+  }, [value]);
 
   return (
     <div className="space-y-1 p-1 w-full ">

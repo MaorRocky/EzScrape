@@ -8,6 +8,7 @@ import {
   Connection,
   Controls,
   Edge,
+  MarkerType,
   ReactFlow,
   useEdgesState,
   useNodesState,
@@ -19,9 +20,14 @@ import { CreateFlowNode } from "@/lib/workflow/createFlowNode";
 import { TaskType } from "@/types/task";
 import NodeComponent from "@/app/workflow/_components/nodes/NodeComponent";
 import { AppNode } from "@/types/appNode";
+import DeleteableEdge from "@/app/workflow/_components/edges/DeleteableEdge";
 
 const nodeTypes = {
   FlowScrapeNode: NodeComponent,
+};
+
+const edgeTypes = {
+  default: DeleteableEdge,
 };
 
 const snapGrid: [number, number] = [30, 30];
@@ -32,7 +38,7 @@ const fitViewOptions = {
 function FlowEditor({ workflow }: { workflow: Workflow }) {
   const [nodes, setNodes, onNodesChange] = useNodesState<AppNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-  const { setViewport, screenToFlowPosition } = useReactFlow();
+  const { setViewport, screenToFlowPosition, updateNodeData } = useReactFlow();
 
   useEffect(() => {
     try {
@@ -59,11 +65,36 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
   const onConnect = useCallback(
     (connection: Connection) => {
       setEdges((prevEdges) =>
-        addEdge({ ...connection, animated: true }, prevEdges)
+        addEdge(
+          {
+            ...connection,
+            animated: true,
+          },
+          prevEdges
+        )
       );
+      if (!connection.targetHandle) {
+        return;
+      }
+
+      //remove input value if its present in the target node
+      const targetNode = nodes.find((node) => node.id === connection.target);
+      if (!targetNode) {
+        return;
+      }
+
+      console.log("id", targetNode.id);
+      console.log("handle", connection.targetHandle);
+      const nodeInputs = targetNode.data?.inputs || [];
+
+      updateNodeData(targetNode.id, {
+        inputs: { ...nodeInputs, [connection.targetHandle]: "" },
+      });
     },
-    [setEdges]
+    [nodes, setEdges, updateNodeData]
   );
+
+  console.log(nodes);
 
   const onDrop = useCallback(
     (event: React.DragEvent) => {
@@ -91,6 +122,7 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         snapToGrid
         snapGrid={snapGrid}
         fitViewOptions={fitViewOptions}
