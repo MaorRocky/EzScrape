@@ -7,6 +7,10 @@ import {
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import { WorkflowStatus } from "@/types/workflow";
+import { AppNode } from "@/types/appNode";
+import { CreateFlowNode } from "@/lib/workflow/createFlowNode";
+import { TaskType } from "@/types/task";
+import { Edge } from "@xyflow/react";
 import { redirect } from "next/navigation";
 
 export async function createWorkflow(form: CreateWorkflowSchemaType) {
@@ -21,10 +25,17 @@ export async function createWorkflow(form: CreateWorkflowSchemaType) {
     throw new Error("User not authenticated");
   }
 
+  const initialFlow: { nodes: AppNode[]; edges: Edge[] } = {
+    nodes: [],
+    edges: [],
+  };
+
+  initialFlow.nodes.push(CreateFlowNode(TaskType.LAUNCH_BROWSER));
+
   const result = await prisma.workflow.create({
     data: {
       userId,
-      definition: "TODO",
+      definition: JSON.stringify(initialFlow),
       status: WorkflowStatus.DRAFT,
       ...data,
     },
@@ -34,5 +45,5 @@ export async function createWorkflow(form: CreateWorkflowSchemaType) {
     throw new Error("Failed to create workflow");
   }
 
-  redirect(`/workflows/editor/${result.id}`);
+  redirect(`/workflow/editor/${result.id}`);
 }

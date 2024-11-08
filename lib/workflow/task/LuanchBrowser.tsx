@@ -12,7 +12,7 @@ export const LaunchBrowserTask = {
     {
       name: "Website Url",
       type: TaskParamType.STRING,
-      helperText: "eg https://www.google.com",
+      helperText: "e.g https://www.google.com",
       required: true,
       hideHandle: true,
     },
