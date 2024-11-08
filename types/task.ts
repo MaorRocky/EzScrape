@@ -15,5 +15,6 @@ export interface TaskParam {
   helperText?: string;
   required?: boolean;
   hideHandle?: boolean;
+  variant?: string;
   [key: string]: any;
 }

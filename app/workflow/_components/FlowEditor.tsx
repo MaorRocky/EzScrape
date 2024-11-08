@@ -83,8 +83,6 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
         return;
       }
 
-      console.log("id", targetNode.id);
-      console.log("handle", connection.targetHandle);
       const nodeInputs = targetNode.data?.inputs || [];
 
       updateNodeData(targetNode.id, {
@@ -93,8 +91,6 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
     },
     [nodes, setEdges, updateNodeData]
   );
-
-  console.log(nodes);
 
   const onDrop = useCallback(
     (event: React.DragEvent) => {
