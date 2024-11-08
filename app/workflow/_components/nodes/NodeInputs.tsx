@@ -2,7 +2,7 @@
 import { Handle, Position } from "@xyflow/react";
 import { cn } from "@/lib/utils";
 import { TaskParam } from "@/types/task";
-import NodeParamField from "@/app/(dashboard)/workflows/_components/nodes/NodeParamField";
+import NodeParamField from "@/app/workflow/_components/nodes/NodeParamField";
 
 export function NodeInputs({ children }: { children: React.ReactNode }) {
   return <div className="flex flex-col divide-y gap-2">{children}</div>;

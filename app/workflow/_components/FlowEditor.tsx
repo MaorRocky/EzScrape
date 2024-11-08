@@ -14,7 +14,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import { CreateFlowNode } from "@/lib/workflow/createFlowNode";
 import { TaskType } from "@/types/task";
-import NodeComponent from "@/app/(dashboard)/workflows/_components/nodes/NodeComponent";
+import NodeComponent from "@/app/workflow/_components/nodes/NodeComponent";
 
 const nodeTypes = {
   FlowScrapeNode: NodeComponent,

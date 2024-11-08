@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 import { TaskParam, TaskParamType } from "@/types/task";
-import StringParam from "@/app/(dashboard)/workflows/_components/nodes/param/StringParam";
+import StringParam from "@/app/workflow/_components/nodes/param/StringParam";
 import { useReactFlow } from "@xyflow/react";
 import { AppNode } from "@/types/appNode";
 
