@@ -8,6 +8,10 @@ import {
   NodeInput,
   NodeInputs,
 } from "@/app/workflow/_components/nodes/NodeInputs";
+import {
+  NodeOutput,
+  NodeOutputs,
+} from "@/app/workflow/_components/nodes/NodeOutputs";
 
 const NodeComponent = memo((props: NodeProps) => {
   const nodeData = props.data as AppNodeData;
@@ -16,10 +20,16 @@ const NodeComponent = memo((props: NodeProps) => {
     <NodeCard nodeId={props.id} isSelected={!!props.selected}>
       <NodeHeader taskType={nodeData.type} />
       <NodeInputs>
-        {task.inputs.map((input, i) => (
+        {task.inputs.map((input) => (
           <NodeInput key={input.name} input={input} nodeId={props.id} />
         ))}
       </NodeInputs>
+
+      <NodeOutputs>
+        {task.outputs.map((output) => (
+          <NodeOutput key={output.name} output={output} />
+        ))}
+      </NodeOutputs>
     </NodeCard>
   );
 });

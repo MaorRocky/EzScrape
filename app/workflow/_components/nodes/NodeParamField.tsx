@@ -5,6 +5,7 @@ import { TaskParam, TaskParamType } from "@/types/task";
 import StringParam from "@/app/workflow/_components/nodes/param/StringParam";
 import { useReactFlow } from "@xyflow/react";
 import { AppNode } from "@/types/appNode";
+import BrowserInstanceParam from "@/app/workflow/_components/nodes/param/BrowserInstanceParam";
 
 function NodeParamField({
   param,
@@ -35,6 +36,14 @@ function NodeParamField({
         <StringParam
           param={param}
           value={value}
+          updateNodeParamValue={updateNodeParamValue}
+        />
+      );
+    case TaskParamType.BROWSER_INSTANCE:
+      return (
+        <BrowserInstanceParam
+          value=""
+          param={param}
           updateNodeParamValue={updateNodeParamValue}
         />
       );
