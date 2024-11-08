@@ -2,10 +2,19 @@
 
 import TooltipWrapper from "@/components/TooltipWrapper";
 import { Button } from "@/components/ui/button";
-import { router } from "next/client";
-import { ChevronLeftIcon } from "lucide-react";
 
-function Topbar() {
+import { ChevronLeftIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import SaveButton from "@/app/(dashboard)/workflows/_components/topbar/SaveButton";
+
+interface TopbarProps {
+  title: string;
+  subtitle?: string;
+  workflowId: string;
+}
+
+function Topbar({ title, subtitle, workflowId }: TopbarProps) {
+  const router = useRouter();
   return (
     <header className="flex p-2 border-b-pink-200 border-separate justify-between w-full h-[60px] sticky top-0 bg-background z-10">
       <div className="flex gap-1 flex-1">
@@ -14,6 +23,17 @@ function Topbar() {
             <ChevronLeftIcon size="20" />
           </Button>
         </TooltipWrapper>
+        <div>
+          <p className="font-bold text-ellipsis truncate">{title}</p>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground text-ellipsis truncate">
+              {subtitle}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="flex gap-1 justify-end">
+        <SaveButton workflowId={workflowId} />
       </div>
     </header>
   );
