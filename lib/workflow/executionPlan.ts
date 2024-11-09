@@ -11,7 +11,11 @@ type FlowToExecutionPlan = {
   executionPlan?: WorkFlowExecutionPlan;
 };
 
-function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>) {
+function getInvalidInputs(
+  node: AppNode,
+  edges: Edge[],
+  planned: Set<string>
+): TaskParam[] {
   const invalidInputs = [];
   const inputs: TaskParam[] = TaskRegistry[node.data.type].inputs;
 
