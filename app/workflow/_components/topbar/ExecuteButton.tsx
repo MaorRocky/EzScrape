@@ -13,8 +13,7 @@ function ExecuteButton({ workflowId }: { workflowId: string }) {
       onClick={() => {
         const plan = generate();
         console.table(plan);
-      }}
-    >
+      }}>
       <PlayIcon size="16" className="stroke-orange-400" />
       Execute
     </Button>
