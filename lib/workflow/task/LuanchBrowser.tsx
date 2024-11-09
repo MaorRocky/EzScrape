@@ -23,4 +23,5 @@ export const LaunchBrowserTask = {
       type: TaskParamType.BROWSER_INSTANCE,
     },
   ],
+  credits: 5,
 };

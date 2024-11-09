@@ -22,4 +22,5 @@ export const PageToHtmlTask = {
     },
     { name: "Web Page", type: TaskParamType.BROWSER_INSTANCE },
   ],
+  credits: 5,
 };
