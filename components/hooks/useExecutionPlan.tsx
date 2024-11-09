@@ -6,13 +6,11 @@ import { AppNode } from "@/types/appNode";
 const UseExecutionPlan = () => {
   const { toObject } = useReactFlow();
 
-  const generateExecutionPlan = useCallback(() => {
+  return useCallback(() => {
     const { nodes, edges } = toObject();
     const { executionPlan } = FlowToExecutionPlan(nodes as AppNode[], edges);
     return executionPlan;
   }, [toObject]);
-
-  return generateExecutionPlan;
 };
 
 export default UseExecutionPlan;

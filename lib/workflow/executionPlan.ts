@@ -20,9 +20,7 @@ function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>): T
       continue;
     }
 
-    const incomingEdges = edges.filter(
-      (edge) => edge.target === node.id && !planned.has(edge.source)
-    );
+    const incomingEdges = edges.filter((edge) => edge.target === node.id);
 
     const inputLinkedToOutput = incomingEdges.find((edge) => edge.targetHandle === input.name);
 
@@ -53,6 +51,7 @@ export function FlowToExecutionPlan(nodes: AppNode[], edges: Edge[]): FlowToExec
   const entryPoint = nodes.find((node) => TaskRegistry[node.data.type].isEntryPoint);
 
   if (!entryPoint) {
+    console.error("No entry point found");
     throw new Error("No entry point found");
   }
   const planned = new Set<string>();
@@ -71,14 +70,14 @@ export function FlowToExecutionPlan(nodes: AppNode[], edges: Edge[]): FlowToExec
         continue;
       }
       const invalidInputs = getInvalidInputs(currentNode, edges, planned);
+
       if (invalidInputs.length > 0) {
         const incomers = getIncomers(currentNode, nodes, edges);
+
         if (incomers.every((incomer) => planned.has(incomer.id))) {
           // all incomers are planned and still invalid inputs
           // this means we have invalid inputs
-          console.error(
-            `Node ${currentNode.id} has invalid inputs, invalid inputs {invalidInputs}`
-          );
+          console.error("invalid inputs", currentNode.id, invalidInputs);
           throw new Error("TODO: HANDLE ERROR 1");
         } else {
           continue;
