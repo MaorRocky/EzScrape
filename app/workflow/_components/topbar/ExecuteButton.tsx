@@ -9,7 +9,7 @@ function ExecuteButton({ workflowId }: { workflowId: string }) {
   return (
     <Button
       variant="outline"
-      className="flex items-center gap-2"
+      className="flex items-center gap-2 font-bold border-2 border-amber-500"
       onClick={() => {
         const plan = generate();
         console.table(plan);
