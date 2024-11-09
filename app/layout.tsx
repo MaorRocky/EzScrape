@@ -22,11 +22,9 @@ export default function RootLayout({
       signInFallbackRedirectUrl="/sign-in"
       appearance={{
         elements: {
-          formButtonPrimary:
-            "bg-primary hover:bg-primary/70 text-sm !shadow-none",
+          formButtonPrimary: "bg-primary hover:bg-primary/70 text-sm !shadow-none",
         },
-      }}
-    >
+      }}>
       <html lang="en">
         <body className={inter.className}>
           <AppProviders>{children}</AppProviders>

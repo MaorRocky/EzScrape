@@ -21,8 +21,7 @@ export function NodeOutput({ output }: { output: TaskParam }) {
         className={cn(
           "!bg-muted-foreground !border-2 !border-background !w-4 !h-4 !-right-2",
           ColorForHandle[output.type]
-        )}
-      ></Handle>
+        )}></Handle>
     </div>
   );
 }

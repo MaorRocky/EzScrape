@@ -9,13 +9,7 @@ export function NodeInputs({ children }: { children: React.ReactNode }) {
   return <div className="flex flex-col divide-y gap-2">{children}</div>;
 }
 
-export function NodeInput({
-  input,
-  nodeId,
-}: {
-  input: TaskParam;
-  nodeId: string;
-}) {
+export function NodeInput({ input, nodeId }: { input: TaskParam; nodeId: string }) {
   const edges = useEdges();
   const isConnected = edges.some(
     (edge) => edge.target === nodeId && edge.targetHandle === input.name

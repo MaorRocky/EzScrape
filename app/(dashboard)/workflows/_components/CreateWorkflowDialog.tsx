@@ -5,10 +5,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Layers2Icon, Loader2 } from "lucide-react";
 import CustomDialogHeader from "@/components/CustomDialogHeader";
-import {
-  createWorkflowSchema,
-  CreateWorkflowSchemaType,
-} from "@/schema/workflows";
+import { createWorkflowSchema, CreateWorkflowSchemaType } from "@/schema/workflows";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -60,8 +57,7 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
       onOpenChange={(open) => {
         form.reset();
         setOpen(open);
-      }}
-    >
+      }}>
       <DialogTrigger asChild>
         <Button>{triggerText ?? "Create workflow"}</Button>
       </DialogTrigger>
@@ -73,10 +69,7 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
         />
         <div className="p-6">
           <Form {...form}>
-            <form
-              className="space-y-8 w-full"
-              onSubmit={form.handleSubmit(onSubmit)}
-            >
+            <form className="space-y-8 w-full" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 name="name"
                 control={form.control}
@@ -89,13 +82,10 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Choose a name for your workflow
-                    </FormDescription>
+                    <FormDescription>Choose a name for your workflow</FormDescription>
                     <FormMessage />
                   </FormItem>
-                )}
-              ></FormField>
+                )}></FormField>
 
               <FormField
                 name="description"
@@ -104,20 +94,15 @@ function CreateWorkflowDialog({ triggerText }: { triggerText?: string }) {
                   <FormItem>
                     <FormLabel className="flex gap-1 items-center">
                       Description
-                      <p className="text-muted-foreground text-xs">
-                        (optional)
-                      </p>
+                      <p className="text-muted-foreground text-xs">(optional)</p>
                     </FormLabel>
                     <FormControl>
                       <Textarea className="resize-none" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Provide a short description for your workflow
-                    </FormDescription>
+                    <FormDescription>Provide a short description for your workflow</FormDescription>
                     <FormMessage />
                   </FormItem>
-                )}
-              ></FormField>
+                )}></FormField>
               <Button type="submit" className="w-full" disabled={isPending}>
                 {isPending ? <Loader2 className="animate-spin" /> : "Proceed"}
               </Button>

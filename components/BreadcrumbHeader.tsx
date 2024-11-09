@@ -25,9 +25,7 @@ function BreadcrumbHeader() {
                 <BreadcrumbLink className="capitalize" href={`/${path}`}>
                   {path === "" ? "home" : path}
                 </BreadcrumbLink>
-                {index !== length - 1 && (
-                  <BreadcrumbSeparator className="hidden md:block" />
-                )}
+                {index !== length - 1 && <BreadcrumbSeparator className="hidden md:block" />}
               </BreadcrumbItem>
             </React.Fragment>
           ))}

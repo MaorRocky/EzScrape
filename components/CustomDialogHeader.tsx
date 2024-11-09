@@ -21,26 +21,14 @@ function CustomDialogHeader(props: CustomDialogHeaderProps) {
     <DialogHeader className="py-6">
       <DialogTitle asChild>
         <div className="flex flex-col items-center gap-2 mb-2">
-          {props.icon && (
-            <props.icon className={cn("stroke-primary", props.iconClassName)} />
-          )}
+          {props.icon && <props.icon className={cn("stroke-primary", props.iconClassName)} />}
           {props.title && (
-            <p
-              className={cn(
-                "text-xl text-primary font-bold",
-                props.titleClassName
-              )}
-            >
+            <p className={cn("text-xl text-primary font-bold", props.titleClassName)}>
               {props.title}
             </p>
           )}
           {props.subTitle && (
-            <p
-              className={cn(
-                "text-sm text-muted-foreground",
-                props.subTitleClassName
-              )}
-            >
+            <p className={cn("text-sm text-muted-foreground", props.subTitleClassName)}>
               {props.subTitle}
             </p>
           )}

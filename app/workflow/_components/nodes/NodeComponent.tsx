@@ -4,14 +4,8 @@ import NodeCard from "@/app/workflow/_components/nodes/NodeCard";
 import NodeHeader from "@/app/workflow/_components/nodes/NodeHeader";
 import { AppNodeData } from "@/types/appNode";
 import { TaskRegistry } from "@/lib/workflow/task/Registry";
-import {
-  NodeInput,
-  NodeInputs,
-} from "@/app/workflow/_components/nodes/NodeInputs";
-import {
-  NodeOutput,
-  NodeOutputs,
-} from "@/app/workflow/_components/nodes/NodeOutputs";
+import { NodeInput, NodeInputs } from "@/app/workflow/_components/nodes/NodeInputs";
+import { NodeOutput, NodeOutputs } from "@/app/workflow/_components/nodes/NodeOutputs";
 
 const NodeComponent = memo((props: NodeProps) => {
   const nodeData = props.data as AppNodeData;

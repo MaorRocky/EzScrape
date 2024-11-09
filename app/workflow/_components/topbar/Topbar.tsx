@@ -27,9 +27,7 @@ function Topbar({ title, subtitle, workflowId }: TopbarProps) {
         <div>
           <p className="font-bold text-ellipsis truncate">{title}</p>
           {subtitle && (
-            <p className="text-xs text-muted-foreground text-ellipsis truncate">
-              {subtitle}
-            </p>
+            <p className="text-xs text-muted-foreground text-ellipsis truncate">{subtitle}</p>
           )}
         </div>
       </div>

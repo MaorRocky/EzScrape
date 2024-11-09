@@ -44,17 +44,11 @@ function NodeParamField({
       );
     case TaskParamType.BROWSER_INSTANCE:
       return (
-        <BrowserInstanceParam
-          value=""
-          param={param}
-          updateNodeParamValue={updateNodeParamValue}
-        />
+        <BrowserInstanceParam value="" param={param} updateNodeParamValue={updateNodeParamValue} />
       );
 
     default:
-      return (
-        <div className="text-xs text-muted-foreground">Not Implemented</div>
-      );
+      return <div className="text-xs text-muted-foreground">Not Implemented</div>;
   }
 }
 

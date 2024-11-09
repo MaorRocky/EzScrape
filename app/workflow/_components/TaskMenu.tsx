@@ -14,15 +14,9 @@ import React from "react";
 function TaskMenu() {
   return (
     <aside className="w-[340px] min-w-[340px] max-w-[340px] border-r-2 border-separate h-full p-2 px-4 overflow-auto">
-      <Accordion
-        type="multiple"
-        className="w-full"
-        defaultValue={["extraction"]}
-      >
+      <Accordion type="multiple" className="w-full" defaultValue={["extraction"]}>
         <AccordionItem value="extraction">
-          <AccordionTrigger className="font-bold">
-            Data Extraction
-          </AccordionTrigger>
+          <AccordionTrigger className="font-bold">Data Extraction</AccordionTrigger>
           <AccordionContent className="flex flex-col gap-2">
             <TaskMenuButton taskType={TaskType.PAGE_TO_HTML} />
             <TaskMenuButton taskType={TaskType.EXTRACT_TEXT_FROM_ELEMENT} />
@@ -50,8 +44,7 @@ function TaskMenuButton({ taskType }: { taskType: TaskType }) {
       draggable={true}
       onDragStart={(e) => {
         onDragStart(e, taskType);
-      }}
-    >
+      }}>
       <div className="flex gap-2">
         <task.icon size="20" />
         {task.label}

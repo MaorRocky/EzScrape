@@ -1,9 +1,6 @@
 ﻿import { Edge, getIncomers } from "@xyflow/react";
 import { AppNode } from "@/types/appNode";
-import {
-  WorkFlowExecutionPlan,
-  WorkFlowExecutionPlanPhase,
-} from "@/types/workflow";
+import { WorkFlowExecutionPlan, WorkFlowExecutionPlanPhase } from "@/types/workflow";
 import { TaskRegistry } from "@/lib/workflow/task/Registry";
 import { TaskParam } from "@/types/task";
 
@@ -11,11 +8,7 @@ type FlowToExecutionPlan = {
   executionPlan?: WorkFlowExecutionPlan;
 };
 
-function getInvalidInputs(
-  node: AppNode,
-  edges: Edge[],
-  planned: Set<string>
-): TaskParam[] {
+function getInvalidInputs(node: AppNode, edges: Edge[], planned: Set<string>): TaskParam[] {
   const invalidInputs = [];
   const inputs: TaskParam[] = TaskRegistry[node.data.type].inputs;
 
@@ -31,14 +24,10 @@ function getInvalidInputs(
       (edge) => edge.target === node.id && !planned.has(edge.source)
     );
 
-    const inputLinkedToOutput = incomingEdges.find(
-      (edge) => edge.targetHandle === input.name
-    );
+    const inputLinkedToOutput = incomingEdges.find((edge) => edge.targetHandle === input.name);
 
     const requiredInputProvidedBVisitedOutput =
-      input.required &&
-      inputLinkedToOutput &&
-      planned.has(inputLinkedToOutput.source);
+      input.required && inputLinkedToOutput && planned.has(inputLinkedToOutput.source);
 
     if (requiredInputProvidedBVisitedOutput) {
       // the inputs are required and the input is provided by a visited output
@@ -60,13 +49,8 @@ function getInvalidInputs(
   return invalidInputs;
 }
 
-export function FlowToExecutionPlan(
-  nodes: AppNode[],
-  edges: Edge[]
-): FlowToExecutionPlan {
-  const entryPoint = nodes.find(
-    (node) => TaskRegistry[node.data.type].isEntryPoint
-  );
+export function FlowToExecutionPlan(nodes: AppNode[], edges: Edge[]): FlowToExecutionPlan {
+  const entryPoint = nodes.find((node) => TaskRegistry[node.data.type].isEntryPoint);
 
   if (!entryPoint) {
     throw new Error("No entry point found");
@@ -79,11 +63,7 @@ export function FlowToExecutionPlan(
     },
   ];
 
-  for (
-    let phase = 2;
-    phase < nodes.length || planned.size < nodes.length;
-    phase++
-  ) {
+  for (let phase = 2; phase < nodes.length || planned.size < nodes.length; phase++) {
     const nextPhase: WorkFlowExecutionPlanPhase = { phase, nodes: [] };
     for (const currentNode of nodes) {
       if (planned.has(currentNode.id)) {

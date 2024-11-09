@@ -5,13 +5,7 @@ import prisma from "@/lib/prisma";
 import { WorkflowStatus } from "@/types/workflow";
 import { revalidatePath } from "next/cache";
 
-export async function UpdateWorkflow({
-  id,
-  definition,
-}: {
-  id: string;
-  definition: string;
-}) {
+export async function UpdateWorkflow({ id, definition }: { id: string; definition: string }) {
   const { userId } = await auth();
 
   if (!userId) {

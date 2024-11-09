@@ -1,13 +1,11 @@
 ﻿import { TaskParamType, TaskType } from "@/types/task";
 import { CodeIcon, LucideProps } from "lucide-react";
-import {WorkflowTask} from "@/types/workflow";
+import { WorkflowTask } from "@/types/workflow";
 
 export const PageToHtmlTask = {
   type: TaskType.PAGE_TO_HTML,
   label: "Get Html From Page",
-  icon: (props: LucideProps) => (
-    <CodeIcon className="stroke-pink-500" {...props} />
-  ),
+  icon: (props: LucideProps) => <CodeIcon className="stroke-pink-500" {...props} />,
   isEntryPoint: false,
   inputs: [
     {

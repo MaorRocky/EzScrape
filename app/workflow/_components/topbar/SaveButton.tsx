@@ -29,8 +29,7 @@ function SaveButton({ workflowId }: { workflowId: string }) {
         const workflowDefinition = JSON.stringify(toObject());
         toast.loading("Saving workflow...", { id: "save-workflow" });
         saveMutation.mutate({ id: workflowId, definition: workflowDefinition });
-      }}
-    >
+      }}>
       <CheckIcon size="16" className="stroke-green-500" />
       Save
     </Button>

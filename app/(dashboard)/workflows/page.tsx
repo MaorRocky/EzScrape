@@ -48,9 +48,7 @@ async function UserWorkflows() {
           </div>
           <div className="flex flex-col gap-1 text-center">
             <p className="font-bold text-lg">No workflows found</p>
-            <p className="text-sm text-muted-foreground">
-              Click to create your first workflow
-            </p>
+            <p className="text-sm text-muted-foreground">Click to create your first workflow</p>
           </div>
           <CreateWorkflowDialog triggerText="Create your first workflow" />
         </div>
@@ -69,9 +67,7 @@ async function UserWorkflows() {
       <Alert variant="destructive">
         <AlertCircle className="w-4 h-4" />
         <AlertTitle>Error</AlertTitle>
-        <AlertDescription>
-          Something went wrong. Please try again later
-        </AlertDescription>
+        <AlertDescription>Something went wrong. Please try again later</AlertDescription>
       </Alert>
     );
   }

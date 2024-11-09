@@ -23,12 +23,7 @@ interface Props {
   workflowId: string;
 }
 
-function DeleteWorkflowDialog({
-  open,
-  setOpen,
-  workflowName,
-  workflowId,
-}: Props) {
+function DeleteWorkflowDialog({ open, setOpen, workflowName, workflowId }: Props) {
   const [confirmationText, setConfirmationText] = useState("");
   const deleteMutation = useMutation({
     mutationFn: deleteWorkflow,
@@ -45,9 +40,7 @@ function DeleteWorkflowDialog({
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Are you sure you want to delete this workflow?
-          </AlertDialogTitle>
+          <AlertDialogTitle>Are you sure you want to delete this workflow?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone.
             <div className="flex flex-col py-4 gap-2">
@@ -62,22 +55,16 @@ function DeleteWorkflowDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel
-            color="red"
-            onClick={() => setConfirmationText("")}
-          >
+          <AlertDialogCancel color="red" onClick={() => setConfirmationText("")}>
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            disabled={
-              confirmationText !== workflowName || deleteMutation.isPending
-            }
+            disabled={confirmationText !== workflowName || deleteMutation.isPending}
             onClick={(e) => {
               toast.loading("Deleting workflow...", { id: workflowId });
               deleteMutation.mutate(workflowId);
-            }}
-          >
+            }}>
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

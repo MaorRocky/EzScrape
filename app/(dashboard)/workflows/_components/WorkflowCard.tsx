@@ -3,13 +3,7 @@ import React, { useState } from "react";
 import { Workflow } from "@prisma/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { WorkflowStatus } from "@/types/workflow";
-import {
-  FileTextIcon,
-  MoreVertical,
-  PlayIcon,
-  ShuffleIcon,
-  TrashIcon,
-} from "lucide-react";
+import { FileTextIcon, MoreVertical, PlayIcon, ShuffleIcon, TrashIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -59,8 +53,7 @@ function WorkflowActions({
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
             className="text-destructive flex items-center gap-2"
-            onSelect={() => setShowDeleteDialog((prev) => !prev)}
-          >
+            onSelect={() => setShowDeleteDialog((prev) => !prev)}>
             <TrashIcon size="16" />
             Delete
           </DropdownMenuItem>
@@ -81,8 +74,7 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
             className={cn(
               "w-10 h-10 rounded-full flex items-center justify-center",
               statusColor[workflow.status as WorkflowStatus]
-            )}
-          >
+            )}>
             {isDraft ? (
               <FileTextIcon className="w-5 h-5" />
             ) : (
@@ -105,15 +97,11 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
               buttonVariants({ variant: "outline", size: "sm" }),
               "flex items-center gap-2"
             )}
-            href={`/workflow/editor/${workflow.id}`}
-          >
+            href={`/workflow/editor/${workflow.id}`}>
             <ShuffleIcon size="16" />
             Edit
           </Link>
-          <WorkflowActions
-            workflowName={workflow.name}
-            workflowId={workflow.id}
-          />
+          <WorkflowActions workflowName={workflow.name} workflowId={workflow.id} />
         </div>
       </CardContent>
     </Card>

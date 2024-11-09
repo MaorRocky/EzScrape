@@ -9,13 +9,7 @@ import { useReactFlow } from "@xyflow/react";
 import { AppNode } from "@/types/appNode";
 import { CreateFlowNode } from "@/lib/workflow/createFlowNode";
 
-function NodeHeader({
-  taskType,
-  nodeId,
-}: {
-  taskType: TaskType;
-  nodeId: string;
-}) {
+function NodeHeader({ taskType, nodeId }: { taskType: TaskType; nodeId: string }) {
   const task = TaskRegistry[taskType];
 
   const { deleteElements, getNode, addNodes } = useReactFlow();
@@ -24,9 +18,7 @@ function NodeHeader({
     <div className="flex items-center gap-2 p-2">
       <task.icon size={20} />
       <div className="flex justify-between items-center w-full">
-        <p className="text-xs font-bold uppercase text-muted-foreground">
-          {task.label}
-        </p>
+        <p className="text-xs font-bold uppercase text-muted-foreground">{task.label}</p>
         <div className="flex gap-1 items-center">
           {task.isEntryPoint && <Badge>Entry Point</Badge>}
           <Badge className="gap-2 flex items-center text-xs">
@@ -40,8 +32,7 @@ function NodeHeader({
                 size="icon"
                 onClick={() => {
                   deleteElements({ nodes: [{ id: nodeId }] });
-                }}
-              >
+                }}>
                 <TrashIcon size="12" className="stroke-red-500" />
               </Button>
               <Button
@@ -56,17 +47,12 @@ function NodeHeader({
                     y: newY,
                   });
                   addNodes([newNode]);
-                }}
-              >
+                }}>
                 <CopyIcon size="12" />
               </Button>
             </>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="cursor-grab drag-handle"
-          >
+          <Button variant="ghost" size="icon" className="cursor-grab drag-handle">
             <GripVerticalIcon size={20} />
           </Button>
         </div>

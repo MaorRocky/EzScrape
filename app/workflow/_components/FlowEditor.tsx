@@ -131,13 +131,9 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
       const sourceTask = TaskRegistry[sourceNode.data.type];
       const targetTask = TaskRegistry[targetNode.data.type];
 
-      const output = sourceTask.outputs.find(
-        (output) => output.name === connection.sourceHandle
-      );
+      const output = sourceTask.outputs.find((output) => output.name === connection.sourceHandle);
 
-      const input = targetTask.inputs.find(
-        (input) => input.name === connection.targetHandle
-      );
+      const input = targetTask.inputs.find((input) => input.name === connection.targetHandle);
 
       if (input?.type !== output?.type) {
         console.error("input and output type mismatch");
@@ -145,10 +141,7 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
       }
 
       // no cyclic connections allowed
-      const hasCycle = (
-        node: AppNode,
-        visited: Set<string> = new Set<string>()
-      ) => {
+      const hasCycle = (node: AppNode, visited: Set<string> = new Set<string>()) => {
         if (visited.has(node.id)) return false;
 
         visited.add(node.id);
@@ -182,8 +175,7 @@ function FlowEditor({ workflow }: { workflow: Workflow }) {
         onDragOver={onDragOver}
         onDrop={onDrop}
         onConnect={onConnect}
-        isValidConnection={isValidConnection}
-      >
+        isValidConnection={isValidConnection}>
         <Controls position="top-left" fitViewOptions={fitViewOptions} />
         <Background variant={BackgroundVariant.Dots} gap={12} size={2} />
       </ReactFlow>

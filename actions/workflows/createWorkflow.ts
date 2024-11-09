@@ -1,9 +1,6 @@
 ﻿"use server";
 
-import {
-  createWorkflowSchema,
-  CreateWorkflowSchemaType,
-} from "@/schema/workflows";
+import { createWorkflowSchema, CreateWorkflowSchemaType } from "@/schema/workflows";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import { WorkflowStatus } from "@/types/workflow";
