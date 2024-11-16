@@ -6,9 +6,9 @@ import { WorkflowExecutionStatus } from "@/types/workflow";
 import {
   CalendarIcon,
   CircleDashedIcon,
-  Clock1Icon,
   ClockIcon,
   CoinsIcon,
+  Loader2Icon,
   LucideIcon,
   WorkflowIcon,
 } from "lucide-react";
@@ -16,6 +16,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DatesToDurationString } from "@/lib/helper/dates";
 
 type ExecutionData = Awaited<ReturnType<typeof GetWorkFlowExecutionWithPhases>>;
 
@@ -27,6 +28,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
     refetchInterval: (query) =>
       query.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
   });
+  const duration = DatesToDurationString(query.data?.completedAt, query.data?.startedAt);
 
   return (
     <div className="flex w-full h-full ">
@@ -44,7 +46,11 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
                 : "-"
             }
           />
-          <ExecutionLabel icon={ClockIcon} label="Duration" value={"TODO"} />
+          <ExecutionLabel
+            icon={ClockIcon}
+            label="Duration"
+            value={duration ? duration : <Loader2Icon className="animate-spin " size="20" />}
+          />
           <ExecutionLabel icon={CoinsIcon} label="Credits Consumed" value={"TODO"} />
         </div>
         <Separator />
