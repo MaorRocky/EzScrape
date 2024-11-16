@@ -1,4 +1,5 @@
-﻿import { auth } from "@clerk/nextjs/server";
+﻿"use server";
+import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 
 export async function GetWorkFlowExecutionWithPhases(executionId: string) {
