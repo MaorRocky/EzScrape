@@ -11,6 +11,7 @@ import {
 import { FlowToExecutionPlan } from "@/lib/workflow/executionPlan";
 import { TaskRegistry } from "@/lib/workflow/task/Registry";
 import { redirect } from "next/navigation";
+import { ExecuteWorkflow } from "@/lib/workflow/executeWorkflow";
 
 export async function RunWorkFlow(form: { workflowId: string; flowDefinition?: string }) {
   const { userId } = await auth();
@@ -81,6 +82,8 @@ export async function RunWorkFlow(form: { workflowId: string; flowDefinition?: s
   if (!execution) {
     throw new Error("Workflow execution not created");
   }
+
+  ExecuteWorkflow(execution.id); //  run this in background
 
   redirect(`/workflow/runs/${workflowId}/${execution.id}`);
 }
