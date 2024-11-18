@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DatesToDurationString } from "@/lib/helper/dates";
+import { GetPhasesTotalCosts } from "@/lib/helper/phases";
 
 type ExecutionData = Awaited<ReturnType<typeof GetWorkFlowExecutionWithPhases>>;
 
@@ -29,7 +30,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
       query.state.data?.status === WorkflowExecutionStatus.RUNNING ? 1000 : false,
   });
   const duration = DatesToDurationString(query.data?.completedAt, query.data?.startedAt);
-
+  const creditConsumed = GetPhasesTotalCosts(query.data?.phases || []);
   return (
     <div className="flex w-full h-full ">
       <aside
@@ -51,7 +52,7 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
             label="Duration"
             value={duration ? duration : <Loader2Icon className="animate-spin " size="20" />}
           />
-          <ExecutionLabel icon={CoinsIcon} label="Credits Consumed" value={"TODO"} />
+          <ExecutionLabel icon={CoinsIcon} label="Credits Consumed" value={creditConsumed} />
         </div>
         <Separator />
         <div className="flex justify-center items-center py-2 px-4">
