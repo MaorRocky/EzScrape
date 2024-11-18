@@ -1,8 +1,11 @@
 ﻿import "server-only";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { WorkflowExecutionStatus } from "@/types/workflow";
+import { ExecutionPhaseStatus, WorkflowExecutionStatus } from "@/types/workflow";
 import { waitFor } from "@/lib/helper/waitFor";
+import { ExecutionPhase } from "@prisma/client";
+import { AppNode } from "@/types/appNode";
+import { TaskRegistry } from "@/lib/workflow/task/Registry";
 
 export async function ExecuteWorkflow(executionId: string) {
   const execution = await prisma.workflowExecution.findUnique({
@@ -25,8 +28,12 @@ export async function ExecuteWorkflow(executionId: string) {
   let creditsConsumed = 0;
   let executionFailed = false;
   for (const phase of execution.phases) {
-    await waitFor(3000);
-    //TODO: Implement phase execution
+    const phaseExecution = await executeWorkflowPhase(phase);
+
+    if (!phaseExecution.success) {
+      executionFailed = true;
+      break;
+    }
   }
 
   await finalizeWorkflowExecution(
@@ -98,4 +105,43 @@ async function finalizeWorkflowExecution(
     .catch((err) => {
       console.error("Failed to update workflow last run status", err);
     });
+}
+
+async function executeWorkflowPhase(phase: ExecutionPhase) {
+  const startedAt = new Date();
+  const node = JSON.parse(phase.node) as AppNode;
+
+  await prisma.executionPhase.update({
+    where: { id: phase.id },
+    data: {
+      startedAt,
+      status: ExecutionPhaseStatus.RUNNING,
+    },
+  });
+
+  const creditsRequired = TaskRegistry[node.data.type].credits;
+  console.log(`Executing phase ${phase.name} with ${creditsRequired} credits`);
+
+  //TODO decrement credits from user account
+
+  await waitFor(2000);
+
+  const success = Math.random() < 0.7;
+
+  await finalizePhase(phase.id, success);
+
+  return { success };
+}
+
+async function finalizePhase(phaseId: string, success: boolean) {
+  const status = success ? ExecutionPhaseStatus.COMPLETED : ExecutionPhaseStatus.FAILED;
+  const endedAt = new Date();
+
+  await prisma.executionPhase.update({
+    where: { id: phaseId },
+    data: {
+      status,
+      completedAt: endedAt,
+    },
+  });
 }
