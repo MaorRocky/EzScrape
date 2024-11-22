@@ -8,6 +8,7 @@ export async function ExtractTextFromElementExecutor(
   try {
     const selector = environment.getInput("Selector");
     if (!selector) {
+      console.error("Selector not found");
       return false;
     }
     const html = environment.getInput("Html");
@@ -22,13 +23,8 @@ export async function ExtractTextFromElementExecutor(
       console.error("Element not found");
       return false;
     }
-    const text = $.text(element);
-    if (!text) {
-      console.error("Text not found");
-      return false;
-    }
+    const text = element.text();
     environment.setOutput("Extracted Text", text);
-    console.log("Extracted text", text);
     return true;
   } catch (error) {
     console.error("Error executing", error);
