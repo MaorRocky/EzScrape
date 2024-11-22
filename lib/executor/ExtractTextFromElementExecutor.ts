@@ -8,26 +8,32 @@ export async function ExtractTextFromElementExecutor(
   try {
     const selector = environment.getInput("Selector");
     if (!selector) {
-      console.error("Selector not found");
+      environment.log.error("Selector not found");
       return false;
     }
     const html = environment.getInput("Html");
     if (!html) {
-      console.error("Html not found");
+      environment.log.error("Html not found");
       return false;
     }
     const $ = load(html);
     const element = $(selector);
 
-    if (!element) {
-      console.error("Element not found");
+    if (element.length === 0) {
+      environment.log.error("Element not found");
       return false;
     }
     const text = element.text();
+
+    if (!text) {
+      environment.log.error("Text not found");
+      return false;
+    }
+
     environment.setOutput("Extracted Text", text);
     return true;
-  } catch (error) {
-    console.error("Error executing", error);
+  } catch (error: any) {
+    environment.log.error(`Error extracting text from element: ${error.message}`);
     return false;
   }
 }

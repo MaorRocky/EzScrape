@@ -10,6 +10,8 @@ import { Environment, ExecutionEnvironment } from "@/types/executor";
 import { TaskParamType } from "@/types/task";
 import { Page } from "puppeteer";
 import { Edge } from "@xyflow/react";
+import { LogCollector } from "@/types/log";
+import { createLogCollector } from "@/lib/log";
 
 export async function ExecuteWorkflow(executionId: string) {
   const execution = await prisma.workflowExecution.findUnique({
@@ -30,6 +32,7 @@ export async function ExecuteWorkflow(executionId: string) {
 
   await initializeWorkflowExecution(executionId, execution.workflowId);
   await initializePhaseStatuses(execution);
+
   let creditsConsumed = 0;
   let executionFailed = false;
   for (const phase of execution.phases) {
@@ -116,7 +119,8 @@ async function finalizeWorkflowExecution(
 
 function createExecutionEnvironment(
   node: AppNode,
-  environment: Environment
+  environment: Environment,
+  logCollector: LogCollector
 ): ExecutionEnvironment<any> {
   return {
     getInput(name: string) {
@@ -133,13 +137,15 @@ function createExecutionEnvironment(
     setOutput(name: string, value: string) {
       environment.phases[node.id].outputs[name] = value;
     },
+    log: logCollector,
   };
 }
 
 async function executePhase(
   phase: ExecutionPhase,
   node: AppNode,
-  environment: Environment
+  environment: Environment,
+  logCollector: LogCollector
 ): Promise<boolean> {
   const runFn = ExecutorRegistry[node.data.type];
   if (!runFn) {
@@ -148,7 +154,8 @@ async function executePhase(
 
   const executionEnvironment: ExecutionEnvironment<any> = createExecutionEnvironment(
     node,
-    environment
+    environment,
+    logCollector
   );
 
   return await runFn(executionEnvironment);
@@ -159,6 +166,7 @@ async function executeWorkflowPhase(
   environment: Environment,
   edges: Edge[]
 ) {
+  const logCollector = createLogCollector();
   const startedAt = new Date();
   const node = JSON.parse(phase.node) as AppNode;
 
@@ -178,14 +186,19 @@ async function executeWorkflowPhase(
 
   //TODO decrement credits from user account
 
-  const success = await executePhase(phase, node, environment);
+  const success = await executePhase(phase, node, environment, logCollector);
   const outputs = environment.phases[node.id].outputs;
-  await finalizePhase(phase.id, success, outputs);
+  await finalizePhase(phase.id, success, outputs, logCollector);
 
   return { success };
 }
 
-async function finalizePhase(phaseId: string, success: boolean, outputs: any) {
+async function finalizePhase(
+  phaseId: string,
+  success: boolean,
+  outputs: any,
+  logCollector: LogCollector
+) {
   const status = success ? ExecutionPhaseStatus.COMPLETED : ExecutionPhaseStatus.FAILED;
   const endedAt = new Date();
 
@@ -195,6 +208,15 @@ async function finalizePhase(phaseId: string, success: boolean, outputs: any) {
       status,
       completedAt: endedAt,
       outputs: JSON.stringify(outputs),
+      logs: {
+        createMany: {
+          data: logCollector.getAll().map((log) => ({
+            logLevel: log.level,
+            message: log.message,
+            timestamp: log.timestamp,
+          })),
+        },
+      },
     },
   });
 }
@@ -225,9 +247,8 @@ function setupEnvironmentPhase(node: AppNode, environment: Environment, edges: E
       continue;
     }
 
-    const outputValue =
+    environment.phases[node.id].inputs[input.name] =
       environment.phases[connectedEdge.source].outputs[connectedEdge.sourceHandle!];
-    environment.phases[node.id].inputs[input.name] = outputValue;
   }
 }
 
