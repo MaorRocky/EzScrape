@@ -2,10 +2,13 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { ExecutionPhaseStatus, WorkflowExecutionStatus } from "@/types/workflow";
-import { waitFor } from "@/lib/helper/waitFor";
 import { ExecutionPhase } from "@prisma/client";
 import { AppNode } from "@/types/appNode";
 import { TaskRegistry } from "@/lib/workflow/task/Registry";
+import { ExecutorRegistry } from "@/lib/executor/registry";
+import { Environment, ExecutionEnvironment } from "@/types/executor";
+import { TaskParamType } from "@/types/task";
+import { Page } from "puppeteer";
 
 export async function ExecuteWorkflow(executionId: string) {
   const execution = await prisma.workflowExecution.findUnique({
@@ -21,14 +24,14 @@ export async function ExecuteWorkflow(executionId: string) {
   if (!execution) {
     throw new Error("Execution not found");
   }
-  const environment = { phases: {} };
+  const environment: Environment = { phases: {} };
 
   await initializeWorkflowExecution(executionId, execution.workflowId);
   await initializePhaseStatuses(execution);
   let creditsConsumed = 0;
   let executionFailed = false;
   for (const phase of execution.phases) {
-    const phaseExecution = await executeWorkflowPhase(phase);
+    const phaseExecution = await executeWorkflowPhase(phase, environment);
 
     if (!phaseExecution.success) {
       executionFailed = true;
@@ -42,6 +45,8 @@ export async function ExecuteWorkflow(executionId: string) {
     executionFailed,
     creditsConsumed
   );
+
+  await cleanUpEnvironment(environment);
 
   revalidatePath("/workflow/runs/");
 }
@@ -107,15 +112,58 @@ async function finalizeWorkflowExecution(
     });
 }
 
-async function executeWorkflowPhase(phase: ExecutionPhase) {
+function createExecutionEnvironment(
+  node: AppNode,
+  environment: Environment
+): ExecutionEnvironment<any> {
+  return {
+    getInput(name: string) {
+      return environment.phases[node.id]?.inputs[name];
+    },
+    getBrowser: () => environment.browser,
+    setBrowser: (browser: any) => {
+      environment.browser = browser;
+    },
+    getPage: () => environment.page,
+    setPage: (page: Page) => {
+      environment.page = page;
+    },
+    setOutput(name: string, value: string) {
+      environment.phases[node.id].outputs[name] = value;
+    },
+  };
+}
+
+async function executePhase(
+  phase: ExecutionPhase,
+  node: AppNode,
+  environment: Environment
+): Promise<boolean> {
+  const runFn = ExecutorRegistry[node.data.type];
+  if (!runFn) {
+    return false;
+  }
+
+  const executionEnvironment: ExecutionEnvironment<any> = createExecutionEnvironment(
+    node,
+    environment
+  );
+
+  return await runFn(executionEnvironment);
+}
+
+async function executeWorkflowPhase(phase: ExecutionPhase, environment: Environment) {
   const startedAt = new Date();
   const node = JSON.parse(phase.node) as AppNode;
+
+  setupEnvironmentPhase(node, environment);
 
   await prisma.executionPhase.update({
     where: { id: phase.id },
     data: {
       startedAt,
       status: ExecutionPhaseStatus.RUNNING,
+      inputs: JSON.stringify(environment.phases[node.id].inputs),
     },
   });
 
@@ -124,16 +172,14 @@ async function executeWorkflowPhase(phase: ExecutionPhase) {
 
   //TODO decrement credits from user account
 
-  await waitFor(2000);
-
-  const success = Math.random() < 0.7;
-
-  await finalizePhase(phase.id, success);
+  const success = await executePhase(phase, node, environment);
+  const outputs = environment.phases[node.id].outputs;
+  await finalizePhase(phase.id, success, outputs);
 
   return { success };
 }
 
-async function finalizePhase(phaseId: string, success: boolean) {
+async function finalizePhase(phaseId: string, success: boolean, outputs: any) {
   const status = success ? ExecutionPhaseStatus.COMPLETED : ExecutionPhaseStatus.FAILED;
   const endedAt = new Date();
 
@@ -142,6 +188,35 @@ async function finalizePhase(phaseId: string, success: boolean) {
     data: {
       status,
       completedAt: endedAt,
+      outputs: JSON.stringify(outputs),
     },
   });
+}
+
+function setupEnvironmentPhase(node: AppNode, environment: Environment) {
+  environment.phases[node.id] = {
+    inputs: {},
+    outputs: {},
+  };
+  const inputs = TaskRegistry[node.data.type].inputs;
+  for (const input of inputs) {
+    if (input.type === TaskParamType.BROWSER_INSTANCE) {
+      continue;
+    }
+    const inputValue = node.data.inputs[input.name];
+    if (inputValue) {
+      environment.phases[node.id].inputs[input.name] = inputValue;
+      continue;
+    }
+
+    // get input value from the output
+  }
+}
+
+async function cleanUpEnvironment(environment: Environment) {
+  if (environment.browser) {
+    await environment.browser.close().catch((err) => {
+      console.error("Failed to close browser", err);
+    });
+  }
 }
