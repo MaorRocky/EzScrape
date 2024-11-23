@@ -49,7 +49,7 @@ model WorkflowExecution {
 }
 
 model ExecutionPhase {
-  id                  String    @id @default(cuid())
+  id                  String            @id @default(cuid())
   userId              String
   status              String
   number              Int
@@ -61,18 +61,16 @@ model ExecutionPhase {
   outputs             String?
   creditsConsumed     Int?
   workflowExecutionId String
-
-  execution WorkflowExecution @relation(fields: [workflowExecutionId], references: [id], onDelete: Cascade)
-
-  logs ExecutionLog[]
+  logs                ExecutionLog[]
+  execution           WorkflowExecution @relation(fields: [workflowExecutionId], references: [id], onDelete: Cascade)
 }
 
 model ExecutionLog {
-  id String @id @default(cuid())
-  logLevel String
-  message String
+  id        String   @id @default(cuid())
+  logLevel  String
+  message   String
   timestamp DateTime @default(now())
-  
-  executionPhaseId String 
-  executionPhase ExecutionPhase @relation(fields: [executionPhaseId], references: [id], onDelete: Cascade)
+
+  executionPhaseId String
+  executionPhase   ExecutionPhase @relation(fields: [executionPhaseId], references: [id], onDelete: Cascade)
 }
