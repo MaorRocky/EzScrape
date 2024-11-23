@@ -8,8 +8,7 @@ export async function LaunchBrowserExecutor(
   const webSiteUrl = environment.getInput("Website Url");
   try {
     const browser = await puppeteer.launch({
-      headless: false,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      headless: true,
     });
 
     environment.setBrowser(browser);
