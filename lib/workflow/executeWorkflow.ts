@@ -38,6 +38,7 @@ export async function ExecuteWorkflow(executionId: string) {
   for (const phase of execution.phases) {
     const phaseExecution = await executeWorkflowPhase(phase, environment, edges);
 
+    creditsConsumed += phaseExecution.creditsConsumed;
     if (!phaseExecution.success) {
       executionFailed = true;
       break;
@@ -182,22 +183,24 @@ async function executeWorkflowPhase(
   });
 
   const creditsRequired = TaskRegistry[node.data.type].credits;
-  console.log(`Executing phase ${phase.name} with ${creditsRequired} credits`);
+  let success = await decrementUserCredits(phase.userId, creditsRequired, logCollector);
+  const creditsConsumed = success ? creditsRequired : 0;
+  if (success) {
+    success = await executePhase(phase, node, environment, logCollector);
+  }
 
-  //TODO decrement credits from user account
-
-  const success = await executePhase(phase, node, environment, logCollector);
   const outputs = environment.phases[node.id].outputs;
-  await finalizePhase(phase.id, success, outputs, logCollector);
+  await finalizePhase(phase.id, success, outputs, logCollector, creditsConsumed);
 
-  return { success };
+  return { success, creditsConsumed };
 }
 
 async function finalizePhase(
   phaseId: string,
   success: boolean,
   outputs: any,
-  logCollector: LogCollector
+  logCollector: LogCollector,
+  creditsConsumed: number
 ) {
   const status = success ? ExecutionPhaseStatus.COMPLETED : ExecutionPhaseStatus.FAILED;
   const endedAt = new Date();
@@ -208,6 +211,7 @@ async function finalizePhase(
       status,
       completedAt: endedAt,
       outputs: JSON.stringify(outputs),
+      creditsConsumed,
       logs: {
         createMany: {
           data: logCollector.getAll().map((log) => ({
@@ -258,4 +262,27 @@ async function cleanUpEnvironment(environment: Environment) {
       console.error("Failed to close browser", err);
     });
   }
+}
+
+async function decrementUserCredits(userId: string, amount: number, logCollector: LogCollector) {
+  try {
+    await prisma.userBalance.update({
+      where: {
+        userId,
+        credits: {
+          gte: amount,
+        },
+      },
+      data: {
+        credits: {
+          decrement: amount,
+        },
+      },
+    });
+  } catch (err) {
+    console.error("Failed to decrement user credits", err);
+    logCollector.error("Failed to decrement user credits");
+    return false;
+  }
+  return true;
 }

@@ -1,5 +1,5 @@
 ﻿"use client";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { GetWorkFlowExecutionWithPhases } from "@/actions/workflows/getWorkFlowExecutionWithPhases";
 import { useQuery } from "@tanstack/react-query";
 import { ExecutionPhaseStatus, WorkflowExecutionStatus } from "@/types/workflow";
@@ -10,6 +10,7 @@ import {
   CoinsIcon,
   Loader2Icon,
   LucideIcon,
+  TimerIcon,
   WorkflowIcon,
 } from "lucide-react";
 import {
@@ -40,6 +41,7 @@ import {
 import { cn } from "@/lib/utils";
 import { LogLevel } from "@/types/log";
 import PhaseStatusBadge from "@/app/workflow/runs/[workflowId]/[executionId]/_components/PhaseStatusBadge";
+import ReactCountUpWrapper from "@/components/ReactCountUpWrapper";
 
 type ExecutionData = Awaited<ReturnType<typeof GetWorkFlowExecutionWithPhases>>;
 
@@ -60,6 +62,26 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
   });
 
   const isRunning = query.data?.status === WorkflowExecutionStatus.RUNNING;
+  useEffect(() => {
+    const phases = query.data?.phases || [];
+    if (isRunning) {
+      const phaseToSelect = phases.findLast((x) => x.status === WorkflowExecutionStatus.RUNNING);
+      if (phaseToSelect) {
+        setSelectedPhase(phaseToSelect.id);
+        return;
+      }
+    } else {
+      const phaseToSelect = phases.findLast(
+        (x) =>
+          x.status === WorkflowExecutionStatus.COMPLETED ||
+          x.status === WorkflowExecutionStatus.FAILED
+      );
+      if (phaseToSelect) {
+        setSelectedPhase(phaseToSelect.id);
+        return;
+      }
+    }
+  }, [isRunning, query.data?.phases, setSelectedPhase]);
 
   const duration = DatesToDurationString(query.data?.completedAt, query.data?.startedAt);
   const creditConsumed = GetPhasesTotalCosts(query.data?.phases || []);
@@ -84,7 +106,11 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
             label="Duration"
             value={duration ? duration : <Loader2Icon className="animate-spin " size="20" />}
           />
-          <ExecutionLabel icon={CoinsIcon} label="Credits Consumed" value={creditConsumed} />
+          <ExecutionLabel
+            icon={CoinsIcon}
+            label="Credits Consumed"
+            value={<ReactCountUpWrapper value={creditConsumed} />}
+          />
         </div>
         <Separator />
         <div className="flex justify-center items-center py-2 px-4">
@@ -137,11 +163,11 @@ function ExecutionViewer({ initialData }: { initialData: ExecutionData }) {
                   <CoinsIcon size="20" className="stroke-muted-foreground" />
                   <span>Credits</span>
                 </div>
-                <span>TODO</span>
+                <span>{phaseDetails.data.creditsConsumed}</span>
               </Badge>
               <Badge variant="outline" className="space-x-4">
                 <div className="flex gap-1 items-center">
-                  <ClockIcon size="20" className="stroke-muted-foreground" />
+                  <TimerIcon size="20" className="stroke-muted-foreground" />
                   <span>Duration</span>
                 </div>
                 <span>
@@ -230,7 +256,6 @@ function ParameterViewer({
 
 function LogViewer({ logs }: { logs: ExecutionLog[] | undefined }) {
   if (!logs || logs.length === 0) return null;
-  console.log(JSON.stringify(logs, null, 2));
   return (
     <Card className="w-full">
       <CardHeader className="rounded-lg rounded-b-none border-b py-4 bg-gray-50 dark:bg-background">

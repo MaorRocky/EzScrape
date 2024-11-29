@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import UserAvailableCredits from "@/components/UserAvailableCredits";
 
 const routes = [
   { href: "/", label: "Home", icon: HomeIcon },
@@ -29,7 +30,9 @@ function DesktopSidebar() {
       <div className="flex items-center justify-center  gap-2 border-b-[1px] border-separate p-4">
         <Logo />
       </div>
-      <div className="p-2">TODO CREDITS</div>
+      <div className="p-2">
+        <UserAvailableCredits />
+      </div>
       <div className="flex flex-col p-2 gap-1">
         {routes.map((route) => (
           <Link
@@ -64,6 +67,7 @@ export function MobileSidebar() {
           </SheetTrigger>
           <SheetContent className="w-[400px] sm:w-[540px] space-y-4" side="left">
             <Logo />
+            <UserAvailableCredits />
             <div className="flex flex-col gap-1">
               {routes.map((route) => (
                 <Link
