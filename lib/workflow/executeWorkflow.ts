@@ -266,13 +266,27 @@ async function cleanUpEnvironment(environment: Environment) {
 
 async function decrementUserCredits(userId: string, amount: number, logCollector: LogCollector) {
   try {
+    // Fetch the user's current credit balance
+    const user = await prisma.userBalance.findUnique({
+      where: { userId },
+    });
+
+    if (!user) {
+      const errorMessage = `User with ID ${userId} not found.`;
+      console.error(errorMessage);
+      logCollector.error(errorMessage);
+      return false;
+    }
+
+    if (user.credits < amount) {
+      const insufficientCreditsMessage = `You do not have enough credits. Required: ${amount}, Available: ${user.credits}`;
+      logCollector.error(insufficientCreditsMessage);
+      return false;
+    }
+
+    // Decrement the user's credits
     await prisma.userBalance.update({
-      where: {
-        userId,
-        credits: {
-          gte: amount,
-        },
-      },
+      where: { userId },
       data: {
         credits: {
           decrement: amount,
@@ -280,9 +294,11 @@ async function decrementUserCredits(userId: string, amount: number, logCollector
       },
     });
   } catch (err) {
-    console.error("Failed to decrement user credits", err);
-    logCollector.error("Failed to decrement user credits");
+    const errorMessage = "Failed to decrement user credits";
+    console.error(errorMessage, err);
+    logCollector.error(errorMessage);
     return false;
   }
+
   return true;
 }
