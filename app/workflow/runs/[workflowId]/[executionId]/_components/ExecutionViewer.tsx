@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DatesToDurationString } from "@/lib/helper/dates";
 import { GetPhasesTotalCosts } from "@/lib/helper/phases";
-import { GetWorkflowPhaseDetails } from "@/actions/workflows/GetWorkflowPhaseDetails";
+import { GetWorkflowPhaseDetails } from "@/actions/workflows/getWorkflowPhaseDetails";
 import { Input } from "@/components/ui/input";
 import { ExecutionLog } from "@prisma/client";
 import {

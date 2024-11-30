@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import TooltipWrapper from "@/components/TooltipWrapper";
 import DeleteWorkflowDialog from "@/app/(dashboard)/workflows/_components/DeleteWorkflowDialog";
+import RunButton from "@/app/(dashboard)/workflows/_components/RunButton";
 
 const statusColor = {
   [WorkflowStatus.DRAFT]: "bg-yellow-500 text-yellow-600",
@@ -95,6 +96,7 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
           </div>
         </div>
         <div className="flex items-center space-x-2">
+          {!isDraft && <RunButton workflowId={workflow.id} />}
           <Link
             className={cn(
               buttonVariants({ variant: "outline", size: "sm" }),

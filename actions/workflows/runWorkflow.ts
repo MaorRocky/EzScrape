@@ -7,6 +7,7 @@ import {
   WorkFlowExecutionPlan,
   WorkflowExecutionStatus,
   WorkflowExecutionTrigger,
+  WorkflowStatus,
 } from "@/types/workflow";
 import { FlowToExecutionPlan } from "@/lib/workflow/executionPlan";
 import { TaskRegistry } from "@/lib/workflow/task/Registry";
@@ -38,21 +39,30 @@ export async function RunWorkFlow(form: { workflowId: string; flowDefinition?: s
   }
 
   let executionPlan: WorkFlowExecutionPlan;
-  if (!flowDefinition) {
-    throw new Error("flowDefinition is required");
-  }
+  let workflowDefinition = workflow.definition;
+  if (workflow.status === WorkflowStatus.PUBLISHED) {
+    if (!workflow.executionPlan) {
+      throw new Error("Workflow execution plan not found in published workflow");
+    }
+    executionPlan = JSON.parse(workflow.executionPlan);
+    workflowDefinition = workflow.definition;
+  } else {
+    //workflow is a draft
+    if (!flowDefinition) {
+      throw new Error("flowDefinition is required");
+    }
+    const flow = JSON.parse(flowDefinition);
+    const result = FlowToExecutionPlan(flow.nodes, flow.edges);
+    if (result.error) {
+      throw new Error("Invalid flow definition");
+    }
 
-  const flow = JSON.parse(flowDefinition);
-  const result = FlowToExecutionPlan(flow.nodes, flow.edges);
-  if (result.error) {
-    throw new Error("Invalid flow definition");
-  }
+    if (!result.executionPlan) {
+      throw new Error("no execution plan generated");
+    }
 
-  if (!result.executionPlan) {
-    throw new Error("no execution plan generated");
+    executionPlan = result.executionPlan;
   }
-
-  executionPlan = result.executionPlan;
 
   const execution = await prisma.workflowExecution.create({
     data: {
@@ -61,7 +71,7 @@ export async function RunWorkFlow(form: { workflowId: string; flowDefinition?: s
       status: WorkflowExecutionStatus.PENDING,
       startedAt: new Date(),
       trigger: WorkflowExecutionTrigger.MANUAL,
-      definition: flowDefinition,
+      definition: workflowDefinition,
       phases: {
         create: executionPlan.flatMap((phase) =>
           phase.nodes.flatMap((node) => ({
