@@ -1,5 +1,5 @@
 ﻿"use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -15,9 +15,12 @@ import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 import { UpdateWorkflowCron } from "@/actions/workflows/updateWorkflowCron";
 import { toast } from "sonner";
+import cronstrue from "cronstrue";
 
 function SchedulerDialog({ workflowId }: { workflowId: string }) {
   const [cron, setCron] = useState("");
+  const [validCron, setValidCron] = useState(false);
+  const [readableCron, setreadableCron] = useState("");
 
   const mutation = useMutation({
     mutationFn: UpdateWorkflowCron,
@@ -28,6 +31,16 @@ function SchedulerDialog({ workflowId }: { workflowId: string }) {
       toast.error(error.message, { id: "cron" });
     },
   });
+
+  useEffect(() => {
+    try {
+      const humanCronString = cronstrue.toString(cron);
+      setValidCron(true);
+      setreadableCron(humanCronString);
+    } catch (error) {
+      setValidCron(false);
+    }
+  }, [cron]);
 
   return (
     <Dialog>
@@ -49,6 +62,13 @@ function SchedulerDialog({ workflowId }: { workflowId: string }) {
             value={cron}
             onChange={(e) => setCron(e.target.value)}
           />
+          <div
+            className={cn(
+              "bg-red-100 rounded-md p-4 border text-sm border-destructive text-destructive",
+              validCron && "border-primary text-primary bg-green-100"
+            )}>
+            {validCron ? readableCron : "Not a valid cron expression"}
+          </div>
         </div>
         <DialogFooter className="px-6 gap-2">
           <DialogClose asChild>
