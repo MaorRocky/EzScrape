@@ -3,7 +3,17 @@ import React, { useState } from "react";
 import { Workflow } from "@prisma/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { WorkflowStatus } from "@/types/workflow";
-import { FileTextIcon, MoreVertical, PlayIcon, ShuffleIcon, TrashIcon } from "lucide-react";
+import {
+  CoinsIcon,
+  CornerDownRightIcon,
+  CornerRightDown,
+  FileTextIcon,
+  MoreVertical,
+  MoveRightIcon,
+  PlayIcon,
+  ShuffleIcon,
+  TrashIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -18,6 +28,8 @@ import {
 import TooltipWrapper from "@/components/TooltipWrapper";
 import DeleteWorkflowDialog from "@/app/(dashboard)/workflows/_components/DeleteWorkflowDialog";
 import RunButton from "@/app/(dashboard)/workflows/_components/RunButton";
+import SchedulerDialog from "@/app/(dashboard)/workflows/_components/SchedulerDialog";
+import { Badge } from "@/components/ui/badge";
 
 const statusColor = {
   [WorkflowStatus.DRAFT]: "bg-yellow-500 text-yellow-600",
@@ -83,16 +95,19 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
             )}
           </div>
           <div>
-            <h3 className="text-muted-foreground font-bold">{workflow.name}</h3>
-          </div>
-          <div>
             <h3 className="text-base font-bold text-muted-foreground flex items-center">
+              <Link
+                href={`/workflow/editor/${workflow.id}`}
+                className="flex items-center hover:underline">
+                {workflow.name}
+              </Link>
               {isDraft && (
                 <span className="ml-2 px-2 text-xs bg-yellow-100 text-center text-yellow-800 rounded-full">
                   Draft
                 </span>
               )}
             </h3>
+            <ScheduleSection isDraft={isDraft} creditsCost={workflow.creditsCost} />
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -114,3 +129,24 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
 }
 
 export default WorkflowCard;
+
+function ScheduleSection({ isDraft, creditsCost }: { isDraft: boolean; creditsCost: number }) {
+  if (isDraft) {
+    return null;
+  }
+  return (
+    <div className="flex items-center gap-2">
+      <CornerDownRightIcon className="h-4 w-4 text-muted-foreground" />
+      <SchedulerDialog />
+      <MoveRightIcon className="h-4 w-4 text-muted-foreground" />
+      <TooltipWrapper content="Credit Consumption for a full run">
+        <div className="flex items-center gap-3">
+          <Badge variant="outline" className="space-x-2 text-muted-foreground rounded-sm ">
+            <CoinsIcon className="h-4 w-4" />
+            <span className="text-sm">{creditsCost}</span>
+          </Badge>
+        </div>
+      </TooltipWrapper>
+    </div>
+  );
+}
