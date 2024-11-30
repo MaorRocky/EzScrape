@@ -81,7 +81,10 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
               <PlayIcon className="h-5 w-5 text-white" />
             )}
           </div>
-          <div className="">
+          <div>
+            <h3 className="text-muted-foreground font-bold">{workflow.name}</h3>
+          </div>
+          <div>
             <h3 className="text-base font-bold text-muted-foreground flex items-center">
               {isDraft && (
                 <span className="ml-2 px-2 text-xs bg-yellow-100 text-center text-yellow-800 rounded-full">

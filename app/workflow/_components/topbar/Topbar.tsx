@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import SaveButton from "@/app/workflow/_components/topbar/SaveButton";
 import ExecuteButton from "@/app/workflow/_components/topbar/ExecuteButton";
 import NavigationTabs from "@/app/workflow/_components/topbar/NavigationTabs";
+import PublishButton from "@/app/workflow/_components/topbar/PublishButton";
 
 interface TopbarProps {
   title: string;
@@ -39,6 +40,7 @@ function Topbar({ title, subtitle, workflowId, hideButtons = false }: TopbarProp
           <>
             <ExecuteButton workflowId={workflowId} />
             <SaveButton workflowId={workflowId} />
+            <PublishButton workflowId={workflowId} />
           </>
         )}
       </div>
