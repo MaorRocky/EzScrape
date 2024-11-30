@@ -2,7 +2,6 @@
 import Topbar from "@/app/workflow/_components/topbar/Topbar";
 import { GetWorkflowExecutions } from "@/actions/workflows/getWorkflowExecutions";
 import { InboxIcon, Loader2Icon } from "lucide-react";
-import { waitFor } from "@/lib/helper/waitFor";
 import ExecutionTable from "@/app/workflow/runs/[workflowId]/_components/ExecutionTable";
 
 function ExecutionPage({ params }: { params: { workflowId: string } }) {
@@ -51,5 +50,9 @@ async function ExecutionTableWrapper({ workflowId }: { workflowId: string }) {
     );
   }
 
-  return <ExecutionTable workflowId={workflowId} initialData={executions} />;
+  return (
+    <div className="container py-6 w-full">
+      <ExecutionTable workflowId={workflowId} initialData={executions} />
+    </div>
+  );
 }
