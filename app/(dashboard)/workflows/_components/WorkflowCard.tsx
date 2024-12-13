@@ -32,9 +32,12 @@ import DeleteWorkflowDialog from "@/app/(dashboard)/workflows/_components/Delete
 import RunButton from "@/app/(dashboard)/workflows/_components/RunButton";
 import SchedulerDialog from "@/app/(dashboard)/workflows/_components/SchedulerDialog";
 import { Badge } from "@/components/ui/badge";
-import ExecutionStatusIndicator from "@/app/workflow/runs/[workflowId]/_components/ExecutionStatusIndicator";
+import ExecutionStatusIndicator, {
+  ExecutionStatusLabel,
+} from "@/app/workflow/runs/[workflowId]/_components/ExecutionStatusIndicator";
 import { format, formatDistanceToNow } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
+import DuplicateWorkflowDialog from "@/app/(dashboard)/workflows/_components/DuplicateWorkflowDialog";
 
 const statusColor = {
   [WorkflowStatus.DRAFT]: "bg-yellow-500 text-yellow-600",
@@ -111,6 +114,7 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
                   Draft
                 </span>
               )}
+              <DuplicateWorkflowDialog workflowId={workflow.id} />
             </h3>
             <ScheduleSection
               isDraft={isDraft}
@@ -190,7 +194,7 @@ function LastRunDetails({ workflow }: { workflow: Workflow }) {
             className="flex items-center text-sm gap-2 group">
             <span>Last Run</span>
             <ExecutionStatusIndicator status={lastRunStatus as WorkflowExecutionStatus} />
-            <span>{lastRunStatus}</span>
+            <ExecutionStatusLabel status={lastRunStatus as WorkflowExecutionStatus} />
             <span>{formattedStartedAt}</span>
             <ChevronRightIcon
               size="16"
