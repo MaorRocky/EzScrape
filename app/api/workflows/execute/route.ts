@@ -8,6 +8,7 @@ import {
 } from "@/types/workflow";
 import { TaskRegistry } from "@/lib/workflow/task/Registry";
 import { ExecuteWorkflow } from "@/lib/workflow/executeWorkflow";
+import parser from "cron-parser";
 
 function isValidSecret(secret: string) {
   const API_SECRET = process.env.API_SECRET;
@@ -55,29 +56,37 @@ export async function GET(request: Request) {
   if (!executionPlan) {
     return Response.json({ error: "Workflow execution plan not found" }, { status: 404 });
   }
-  const userId = workflow.userId;
-  const execution = await prisma.workflowExecution.create({
-    data: {
-      workflowId: workflowId,
-      userId: userId,
-      definition: workflow.definition,
-      status: WorkflowExecutionStatus.PENDING,
-      startedAt: new Date(),
-      trigger: WorkflowExecutionTrigger.CRON,
-      phases: {
-        create: executionPlan.flatMap((phase) =>
-          phase.nodes.flatMap((node) => ({
-            userId,
-            status: ExecutionPhaseStatus.CREATED,
-            number: phase.phase,
-            node: JSON.stringify(node),
-            name: TaskRegistry[node.data.type].label,
-          }))
-        ),
-      },
-    },
-  });
 
-  await ExecuteWorkflow(execution.id);
-  return new Response(null, { status: 200 });
+  try {
+    const cron = parser.parseExpression(workflow.cron!, { utc: true });
+    const nextRun = cron.next().toDate();
+
+    const userId = workflow.userId;
+    const execution = await prisma.workflowExecution.create({
+      data: {
+        workflowId: workflowId,
+        userId: userId,
+        definition: workflow.definition,
+        status: WorkflowExecutionStatus.PENDING,
+        startedAt: new Date(),
+        trigger: WorkflowExecutionTrigger.CRON,
+        phases: {
+          create: executionPlan.flatMap((phase) =>
+            phase.nodes.flatMap((node) => ({
+              userId,
+              status: ExecutionPhaseStatus.CREATED,
+              number: phase.phase,
+              node: JSON.stringify(node),
+              name: TaskRegistry[node.data.type].label,
+            }))
+          ),
+        },
+      },
+    });
+
+    await ExecuteWorkflow(execution.id, nextRun);
+    return new Response(null, { status: 200 });
+  } catch (e) {
+    return Response.json({ error: "Invalid cron expression" }, { status: 400 });
+  }
 }

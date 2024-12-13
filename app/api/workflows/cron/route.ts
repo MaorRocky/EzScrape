@@ -15,13 +15,11 @@ export async function GET(req: Request) {
     },
   });
 
-  console.log(workflows.length);
-
   for (const workflow of workflows) {
     triggerWorkflow(workflow.id);
   }
 
-  return new Response(null, { status: 200 });
+  return Response.json({ workflowsToRun: workflows.length }, { status: 200 });
 }
 
 function triggerWorkflow(workflowId: string) {
