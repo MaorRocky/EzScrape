@@ -111,6 +111,7 @@ function WorkflowCard({ workflow }: { workflow: Workflow }) {
               isDraft={isDraft}
               creditsCost={workflow.creditsCost}
               workflowId={workflow.id}
+              cron={workflow.cron}
             />
           </div>
         </div>
@@ -138,10 +139,12 @@ function ScheduleSection({
   isDraft,
   creditsCost,
   workflowId,
+  cron,
 }: {
   isDraft: boolean;
   creditsCost: number;
   workflowId: string;
+  cron: string | null;
 }) {
   if (isDraft) {
     return null;
@@ -149,7 +152,7 @@ function ScheduleSection({
   return (
     <div className="flex items-center gap-2">
       <CornerDownRightIcon className="h-4 w-4 text-muted-foreground" />
-      <SchedulerDialog workflowId={workflowId} />
+      <SchedulerDialog workflowId={workflowId} cronProps={cron} key={`${cron}-${workflowId}`} />
       <MoveRightIcon className="h-4 w-4 text-muted-foreground" />
       <TooltipWrapper content="Credit Consumption for a full run">
         <div className="flex items-center gap-3">
