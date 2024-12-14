@@ -31,7 +31,7 @@ function UnPublishButton({ workflowId }: { workflowId: string }) {
         mutation.mutate(workflowId);
       }}>
       <DownloadIcon size="16" className="stroke-orange-500" />
-      UnPublish
+      Unpublish
     </Button>
   );
 }

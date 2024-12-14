@@ -20,27 +20,28 @@ function TaskMenu() {
         defaultValue={["extraction", "interactions", "timing", "results"]}>
         <AccordionItem value="interactions">
           <AccordionTrigger className="font-bold">User interactions</AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-2">
+          <AccordionContent className="flex flex-col gap-1">
             <TaskMenuButton taskType={TaskType.FILL_INPUT} />
             <TaskMenuButton taskType={TaskType.CLICK_ELEMENT} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="extraction">
           <AccordionTrigger className="font-bold">Data Extraction</AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-2">
+          <AccordionContent className="flex flex-col gap-1">
             <TaskMenuButton taskType={TaskType.PAGE_TO_HTML} />
             <TaskMenuButton taskType={TaskType.EXTRACT_TEXT_FROM_ELEMENT} />
+            <TaskMenuButton taskType={TaskType.EXTRACT_DATA_WITH_AI} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="timing">
           <AccordionTrigger className="font-bold">Timing Controls</AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-2">
+          <AccordionContent className="flex flex-col gap-1">
             <TaskMenuButton taskType={TaskType.WAIT_FOR_ELEMENT} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="results">
           <AccordionTrigger className="font-bold">Result Delivery</AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-2">
+          <AccordionContent className="flex flex-col gap-1">
             <TaskMenuButton taskType={TaskType.DELIVER_VIA_WEBHOOK} />
           </AccordionContent>
         </AccordionItem>
