@@ -29,8 +29,8 @@ function Topbar({
   const router = useRouter();
 
   return (
-    <header className="flex p-2 border-b-2 border-separate justify-between w-full h-[60px] sticky top-0 bg-background z-10">
-      <div className="flex gap-1 flex-1">
+    <header className="flex p-2 border-b-2 border-separate justify-between w-full h-[60px] sticky top-0 bg-background z-10 items-center">
+      <div className="flex gap-1 flex-1 items-center">
         <TooltipWrapper content="Back">
           <Button variant="ghost" size="icon" onClick={() => router.back()}>
             <ChevronLeftIcon size="20" />
@@ -43,8 +43,10 @@ function Topbar({
           )}
         </div>
       </div>
-      <NavigationTabs workflowId={workflowId} />
-      <div className="flex gap-1 justify-end">
+      <div className="flex-1 flex justify-center">
+        <NavigationTabs workflowId={workflowId} />
+      </div>
+      <div className="flex gap-1 justify-end flex-1 items-center">
         {!hideButtons && (
           <>
             <ExecuteButton workflowId={workflowId} />
