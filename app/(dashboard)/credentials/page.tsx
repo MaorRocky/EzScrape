@@ -1,10 +1,12 @@
 ﻿import React, { Suspense } from "react";
-import { ShieldIcon } from "lucide-react";
+import { LockKeyholeIcon, ShieldIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GetCredentialsForUser } from "@/actions/credentials/getCredentialsForUser";
 import { Card } from "@/components/ui/card";
 import CreateCredentialDialog from "@/app/(dashboard)/credentials/_components/CreateCredentialDialog";
+import { formatDistanceToNow } from "date-fns";
+import DeleteCredentialDialog from "@/app/(dashboard)/credentials/_components/DeleteCredentialDialog";
 
 function CredentialsPage() {
   return (
@@ -58,13 +60,24 @@ async function UserCredentials() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col">
-          <h2 className="text-lg font-bold">My Credentials</h2>
-          <p className="text-sm text-muted-foreground">Manage your credentials</p>
-        </div>
-      </div>
+    <div className="flex flex-wrap gap-2">
+      {credentials.map(function (credential) {
+        const createdAt = formatDistanceToNow(credential.createdAt, { addSuffix: true });
+        return (
+          <Card className="w-full flex p-4 justify-between" key={credential.name}>
+            <div className="flex gap-2 items-center">
+              <div className="rounded-full bg-primary/10 w-8 h-8 flex items-center justify-center">
+                <LockKeyholeIcon size="18" className="stroke-primary" />
+              </div>
+              <div>
+                <p className="font-bold">{credential.name}</p>
+                <p className="text-xs text-muted-foreground">{createdAt}</p>
+              </div>
+            </div>
+            <DeleteCredentialDialog name={credential.name} />
+          </Card>
+        );
+      })}
     </div>
   );
 }

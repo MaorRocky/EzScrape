@@ -1,4 +1,5 @@
-﻿import crypto from "crypto";
+﻿import "server-only";
+import crypto from "crypto";
 const ALG = "aes-256-cbc";
 
 export const symmetricEncrypt = (data: string) => {
