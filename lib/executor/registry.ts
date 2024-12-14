@@ -6,6 +6,7 @@ import { WorkflowTask } from "@/types/workflow";
 import { ExtractTextFromElementExecutor } from "@/lib/executor/ExtractTextFromElementExecutor";
 import { FillInputExecutor } from "@/lib/executor/FillInputExecutor";
 import { ClickElementExecutor } from "@/lib/executor/ClickElementExecutor";
+import { WaitForElementExecutor } from "@/lib/executor/WaitForElementExecutor";
 
 type ExecutorFn<T extends WorkflowTask> = (ExecutorFn: ExecutionEnvironment<T>) => Promise<boolean>;
 type RegistryType = {
@@ -18,4 +19,5 @@ export const ExecutorRegistry: RegistryType = {
   EXTRACT_TEXT_FROM_ELEMENT: ExtractTextFromElementExecutor,
   FILL_INPUT: FillInputExecutor,
   CLICK_ELEMENT: ClickElementExecutor,
+  WAIT_FOR_ELEMENT: WaitForElementExecutor,
 };

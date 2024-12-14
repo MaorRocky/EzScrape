@@ -6,6 +6,7 @@ import StringParam from "@/app/workflow/_components/nodes/param/StringParam";
 import { useReactFlow } from "@xyflow/react";
 import { AppNode } from "@/types/appNode";
 import BrowserInstanceParam from "@/app/workflow/_components/nodes/param/BrowserInstanceParam";
+import SelectParam from "@/app/workflow/_components/nodes/param/SelectParam";
 
 function NodeParamField({
   param,
@@ -46,7 +47,15 @@ function NodeParamField({
       return (
         <BrowserInstanceParam value="" param={param} updateNodeParamValue={updateNodeParamValue} />
       );
-
+    case TaskParamType.SELECT:
+      return (
+        <SelectParam
+          param={param}
+          value={value}
+          updateNodeParamValue={updateNodeParamValue}
+          disabled={disabled}
+        />
+      );
     default:
       return <div className="text-xs text-muted-foreground">Not Implemented</div>;
   }
